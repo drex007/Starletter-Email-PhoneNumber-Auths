@@ -7,6 +7,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from .serializers import (GenerateEmailOtpSerializer, GeneratePhoneNumberOtpSerializer)
 from .auth_messaging import send_email_otp,send_mobile_otp
+from django.http import HttpResponse
+from django.shortcuts import render
 
 class GenerateEmailOtp(APIView):
     serializer_class = GenerateEmailOtpSerializer
@@ -76,5 +78,12 @@ class GeneratePhoneNumberOtp(APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
         
 mobile_otp = GeneratePhoneNumberOtp.as_view()
-             
-                  
+
+
+
+
+
+
+# Create your views here.
+def index(request):
+    return render(request,"starletter/index.html",{})
