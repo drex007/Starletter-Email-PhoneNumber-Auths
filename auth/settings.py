@@ -65,7 +65,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     'https://starletterauths.up.railway.app/',
     'https://starletterauths.up.railway.app'
-],
+]
 
 CORS_ORIGIN_WHITELIST = [
     'https://starletterauths.up.railway.app/',
