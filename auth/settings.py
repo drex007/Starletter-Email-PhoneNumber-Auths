@@ -62,6 +62,15 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'auth.urls'
 
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://starletterauths.up.railway.app/',
+    'https://starletterauths.up.railway.app'
+],
+
+CORS_ORIGIN_WHITELIST = [
+    'https://starletterauths.up.railway.app/',
+    'https://starletterauths.up.railway.app'
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
