@@ -5,7 +5,7 @@ import requests
 url = "https://api.ng.termii.com/api/sms/send"
 
 def send_email_otp(email, otp):
-    print(otp, 'from mail')
+    # print(otp, 'from mail')
     send_mail(
         "Starletter e-mail verification",
         f"Dear user, your email verification code is {otp}",
@@ -15,8 +15,8 @@ def send_email_otp(email, otp):
     )
 
 def send_mobile_otp(phone, otp):
-    print(str("+234" + phone))
-    print(settings.SMS_SK)
+    # print(str("+234" + phone))
+    # print(settings.SMS_SK)
     payload = {
         # "to": str("+234" + phone[1:]),
         "to": str("+234" + phone),
