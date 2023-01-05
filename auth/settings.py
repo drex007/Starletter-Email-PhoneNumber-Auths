@@ -68,7 +68,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'https://starletterauths.up.railway.app/',
+    
     'https://starletterauths.up.railway.app'
 ]
 TEMPLATES = [

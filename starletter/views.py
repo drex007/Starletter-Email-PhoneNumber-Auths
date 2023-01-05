@@ -63,21 +63,40 @@ class GeneratePhoneNumberOtp(APIView):
             otp = generate_otp()
             instance.otp = otp
             instance.save()
-            send_mobile_otp(data["phonenumber"], otp)
-            return Response(data={"message": "verification code has been sent to this already phonenumber"}, status=status.HTTP_201_CREATED)   
+            sms_status = send_mobile_otp(data["phonenumber"], otp)
+            if sms_status:
+                return Response(data={"message": "verification code has been sent to this already phonenumber"}, status=status.HTTP_201_CREATED) 
+            return Response(data={"message": "An error occured while trying to send a verification code"}, status=status.HTTP_400_BAD_REQUEST)    
         except PhoneStorage.DoesNotExist:
             inputs = {
                     "phonenumber": data['phonenumber'],
                     "otp": generate_otp()
                 }
             serializer = self.serializer_class(data = inputs)
-            if serializer.is_valid():
-                serializer.save()
-                send_mobile_otp(data["phonenumber"], inputs["otp"])
+            
+            sms_status = send_mobile_otp(data["phonenumber"], inputs["otp"])
+            if sms_status:
+                if serializer.is_valid():
+                    serializer.save()
+            
                 return Response(data=serializer.data, status=status.HTTP_201_CREATED)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
         
 mobile_otp = GeneratePhoneNumberOtp.as_view()
+
+class VerifyMobileOtp(APIView):
+    def post(self, request):
+        data = request.data
+        try:
+            instance = PhoneStorage.objects.get(phonenumber=data["phonenumber"])
+            if instance.otp == data["otp"]:
+                return Response(data={"message": "Phone number is verified"}, status=status.HTTP_200_OK)
+            return Response(data={"message": "You entered a wrong verification code"} , status=status.HTTP_400_BAD_REQUEST)
+        except PhoneStorage.DoesNotExist:
+            return Response(data={"message": "Error occured while verifying Phone number"} , status=status.HTTP_400_BAD_REQUEST)
+        
+
+verify_mobile_otp = VerifyMobileOtp.as_view()
 
 
 
