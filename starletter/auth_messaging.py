@@ -33,7 +33,8 @@ def send_mobile_otp(phone, otp):
         "Content-Type": "application/json",
     }
     response = requests.post(url, headers=headers, json=payload)
-    if response.status_code == 200:
+    # print(response)
+    if response.status_code == 200 or response.status_code == 201:
         return True
     return False
    

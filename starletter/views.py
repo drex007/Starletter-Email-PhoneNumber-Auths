@@ -17,7 +17,7 @@ class GenerateEmailOtp(APIView):
         data = request.data
         try:
             
-            instance=EmailStorage.objects.get(email=data['email'])
+            instance=EmailStorage.objects.filter(email=data['email']).first()
             otp = generate_otp()
             instance.otp = otp
             instance.save()
@@ -41,7 +41,7 @@ class VerifyEmailOtp(APIView):
     def post(self, request):
         data = request.data
         try:
-            instance = EmailStorage.objects.get(email=data["email"])
+            instance = EmailStorage.objects.filter(email=data["email"]).first()
             if instance.otp == data["otp"]:
                 return Response(data={"message": "email is verified"}, status=status.HTTP_200_OK)
             return Response(data={"message": "You entered a wrong verification code"} , status=status.HTTP_400_BAD_REQUEST)
@@ -59,7 +59,7 @@ class GeneratePhoneNumberOtp(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
         try:
-            instance=PhoneStorage.objects.get(phonenumber=data['phonenumber'])
+            instance=PhoneStorage.objects.filter(phonenumber=data['phonenumber']).first()
             otp = generate_otp()
             instance.otp = otp
             instance.save()
@@ -88,7 +88,7 @@ class VerifyMobileOtp(APIView):
     def post(self, request):
         data = request.data
         try:
-            instance = PhoneStorage.objects.get(phonenumber=data["phonenumber"])
+            instance = PhoneStorage.objects.filter(phonenumber=data["phonenumber"]).first()
             if instance.otp == data["otp"]:
                 return Response(data={"message": "Phone number is verified"}, status=status.HTTP_200_OK)
             return Response(data={"message": "You entered a wrong verification code"} , status=status.HTTP_400_BAD_REQUEST)
