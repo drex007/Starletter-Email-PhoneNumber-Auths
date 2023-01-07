@@ -23,7 +23,7 @@ class GenerateEmailOtp(APIView):
             instance.save()
             send_email_otp(data["email"],otp )
             return Response(data={"message": "verification code has been sent to this already existing email"}, status=status.HTTP_201_CREATED)   
-        except EmailStorage.DoesNotExist:
+        except (EmailStorage.DoesNotExist , AttributeError):
             inputs = {
                     "email": data['email'],
                     "otp": generate_otp()
@@ -67,7 +67,7 @@ class GeneratePhoneNumberOtp(APIView):
             if sms_status:
                 return Response(data={"message": "verification code has been sent to this already phonenumber"}, status=status.HTTP_201_CREATED) 
             return Response(data={"message": "An error occured while trying to send a verification code"}, status=status.HTTP_400_BAD_REQUEST)    
-        except PhoneStorage.DoesNotExist:
+        except (PhoneStorage.DoesNotExist , AttributeError):
             inputs = {
                     "phonenumber": data['phonenumber'],
                     "otp": generate_otp()
