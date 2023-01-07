@@ -87,8 +87,9 @@ mobile_otp = GeneratePhoneNumberOtp.as_view()
 class VerifyMobileOtp(APIView):
     def post(self, request):
         data = request.data
+        phone = data["phonenumber"][1:] if data["phonenumber"][0] == "0" else  data["phonenumber"]
         try:
-            instance = PhoneStorage.objects.filter(phonenumber=data["phonenumber"]).first()
+            instance = PhoneStorage.objects.filter(phonenumber=phone).first()
             if instance.otp == data["otp"]:
                 return Response(data={"message": "Phone number is verified"}, status=status.HTTP_200_OK)
             return Response(data={"message": "You entered a wrong verification code"} , status=status.HTTP_400_BAD_REQUEST)
