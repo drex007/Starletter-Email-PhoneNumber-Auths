@@ -23,7 +23,7 @@ class GenerateEmailOtp(APIView):
             instance.save()
             send_email_otp(data["email"],otp )
             return Response(data={"message": "verification code has been sent to this already existing email"}, status=status.HTTP_201_CREATED)   
-        except (EmailStorage.DoesNotExist , AttributeError):
+        except (EmailStorage.DoesNotExist , AttributeError) as e:
             inputs = {
                     "email": data['email'],
                     "otp": generate_otp()
@@ -58,8 +58,9 @@ class GeneratePhoneNumberOtp(APIView):
     
     def post(self, request, *args, **kwargs):
         data = request.data
+        phone = data["phonenumber"][1:] if data["phonenumber"][0] == "0" else  data["phonenumber"]
         try:
-            instance=PhoneStorage.objects.filter(phonenumber=data['phonenumber']).first()
+            instance=PhoneStorage.objects.filter(phonenumber=phone).first()
             otp = generate_otp()
             instance.otp = otp
             instance.save()
@@ -67,9 +68,9 @@ class GeneratePhoneNumberOtp(APIView):
             if sms_status:
                 return Response(data={"message": "verification code has been sent to this already phonenumber"}, status=status.HTTP_201_CREATED) 
             return Response(data={"message": "An error occured while trying to send a verification code"}, status=status.HTTP_400_BAD_REQUEST)    
-        except (PhoneStorage.DoesNotExist , AttributeError):
+        except (PhoneStorage.DoesNotExist , AttributeError) as e:
             inputs = {
-                    "phonenumber": data['phonenumber'],
+                    "phonenumber": phone,
                     "otp": generate_otp()
                 }
             serializer = self.serializer_class(data = inputs)
@@ -93,7 +94,7 @@ class VerifyMobileOtp(APIView):
             if instance.otp == data["otp"]:
                 return Response(data={"message": "Phone number is verified"}, status=status.HTTP_200_OK)
             return Response(data={"message": "You entered a wrong verification code"} , status=status.HTTP_400_BAD_REQUEST)
-        except PhoneStorage.DoesNotExist:
+        except (PhoneStorage.DoesNotExist, AttributeError) as e:
             return Response(data={"message": "Error occured while verifying Phone number"} , status=status.HTTP_400_BAD_REQUEST)
         
 
