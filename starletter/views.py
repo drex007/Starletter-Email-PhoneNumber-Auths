@@ -12,7 +12,7 @@ from django.shortcuts import render
 
 class GenerateEmailOtp(APIView):
     serializer_class = GenerateEmailOtpSerializer
-    //Added comments
+    #Added comments
     def post(self, request, *args, **kwargs):
         data = request.data
         try:
