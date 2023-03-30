@@ -28,7 +28,7 @@ SECRET_KEY =os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["starletter-auth.azurewebsites.net", "*"]
 
 
 # Application definition
@@ -64,12 +64,16 @@ ROOT_URLCONF = 'auth.urls'
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     'https://starletterauths.up.railway.app/',
-    'https://starletterauths.up.railway.app'
+    'https://starletterauths.up.railway.app',
+    'https://starletter-auth.azurewebsites.net/',
+     'https://starletter-auth.azurewebsites.net'
 ]
+
 
 CORS_ORIGIN_WHITELIST = [
     
-    'https://starletterauths.up.railway.app'
+    'https://starletterauths.up.railway.app',
+    'https://starletter-auth.azurewebsites.net'
 ]
 TEMPLATES = [
     {
@@ -102,6 +106,7 @@ DATABASES = {
         "PASSWORD": str(os.getenv("POSTGRES_PASSWORD")),
         "HOST": str(os.getenv("PG_HOST")),
         "PORT": str(os.getenv("PG_PORT")),
+        # "OPTIONS": {"sslmode": "require"}
     }
 }
 
@@ -121,7 +126,7 @@ EMAIL_HOST_USER = str(os.getenv("EMAIL_HOST_USER"))
 EMAIL_HOST_PASSWORD = str(os.getenv("EMAIL_HOST_PASSWORD"))
 DEFAULT_FROM_EMAIL = "info@Starletter.con"
 DOMAIN = str(os.getenv("DOMAIN"))
-SITE_NAME = "PMS"
+SITE_NAME = "Starletter"
 
 
 # Password validation
@@ -161,8 +166,8 @@ USE_TZ = True
 
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = BASE_DIR /'staticfiles'
+# STATICFILES_DIRS = BASE_DIR / "static"
 STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
