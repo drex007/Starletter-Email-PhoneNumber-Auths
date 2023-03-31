@@ -28,7 +28,6 @@ def send_email_otp(email, otp):
         logger.info(f"Email Code error: {e}")
         return False
    
-
 def send_mobile_otp(phone, otp):
     send_phoneumber = f"+234{phone[1:]}" if phone[0] == "0" else f"+234{phone}"
     payload = {
