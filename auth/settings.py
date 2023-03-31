@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from pythonjsonlogger.jsonlogger import JsonFormatter
+from .logging_formatters import CustomJsonFormatter
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,11 +30,11 @@ SECRET_KEY =os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ["starletter-auth.azurewebsites.net", "*"]
+ALLOWED_HOSTS = ["starletter-auth.azurewebsites.net", "localhost"]
 
 
 # Application definition
-
+# 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,17 +65,16 @@ ROOT_URLCONF = 'auth.urls'
 
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    'https://starletterauths.up.railway.app/',
-    'https://starletterauths.up.railway.app',
     'https://starletter-auth.azurewebsites.net/',
-     'https://starletter-auth.azurewebsites.net'
+     'https://starletter-auth.azurewebsites.net',
+     'http://localhost:8000'
 ]
 
 
 CORS_ORIGIN_WHITELIST = [
     
-    'https://starletterauths.up.railway.app',
-    'https://starletter-auth.azurewebsites.net'
+    'https://starletter-auth.azurewebsites.net',
+    'http://localhost:8000'
 ]
 TEMPLATES = [
     {
@@ -92,6 +93,40 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'auth.wsgi.application'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        "main_formatter": {
+          
+            '()': CustomJsonFormatter,
+        }    
+    },
+     
+    'handlers': {
+        'console': {
+            'class': "logging.StreamHandler",
+            'formatter': 'main_formatter'
+        }, 
+        'file': {   
+            'class': "logging.FileHandler",
+            'filename': 'info.log',
+            'formatter': 'main_formatter'
+        },
+       
+    },
+    'loggers': {
+        'main': {
+            'handlers': ['file', 'console'],
+            'propagate': True,
+            'level': 'INFO'
+        },
+      
+    }
+    
+}
+
 
 
 # Database
@@ -124,7 +159,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = str(os.getenv("EMAIL_PORT"))
 EMAIL_HOST_USER = str(os.getenv("EMAIL_HOST_USER"))
 EMAIL_HOST_PASSWORD = str(os.getenv("EMAIL_HOST_PASSWORD"))
-DEFAULT_FROM_EMAIL = "info@Starletter.con"
+DEFAULT_FROM_EMAIL = str(os.getenv('DEFAULT_EMAIL'))
 DOMAIN = str(os.getenv("DOMAIN"))
 SITE_NAME = "Starletter"
 

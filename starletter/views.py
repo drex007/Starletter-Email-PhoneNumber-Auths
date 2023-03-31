@@ -9,6 +9,11 @@ from .serializers import (GenerateEmailOtpSerializer, GeneratePhoneNumberOtpSeri
 from .auth_messaging import send_email_otp,send_mobile_otp
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.http import HttpResponse
+import logging
+
+# Create your views here.
+logger = logging.getLogger("main")
 
 class GenerateEmailOtp(APIView):
     serializer_class = GenerateEmailOtpSerializer
@@ -21,8 +26,10 @@ class GenerateEmailOtp(APIView):
             otp = generate_otp()
             instance.otp = otp
             instance.save()
-            send_email_otp(data["email"],otp )
-            return Response(data={"message": "verification code has been sent to this already existing email"}, status=status.HTTP_201_CREATED)   
+            send_email = send_email_otp(data["email"],otp )
+            if(send_email):
+                return Response(data={"message": "verification code has been sent to this already existing email"}, status=status.HTTP_201_CREATED)
+            return Response(data={"message": "verification not sent"}, status=status.HTTP_400_BAD_REQUEST)    
         except (EmailStorage.DoesNotExist , AttributeError) as e:
             inputs = {
                     "email": data['email'],
@@ -31,8 +38,10 @@ class GenerateEmailOtp(APIView):
             serializer = self.serializer_class(data = inputs)
             if serializer.is_valid():
                 serializer.save()
-                send_email_otp(data["email"], inputs["otp"])
-                return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+                sent_email = send_email_otp(data["email"], inputs["otp"])
+                if(sent_email):
+                    return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+                return Response(data={"message": "Verificaton not sent"}, status=status.HTTP_400_BAD_REQUEST)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
         
 email_otp = GenerateEmailOtp.as_view()
@@ -79,9 +88,9 @@ class GeneratePhoneNumberOtp(APIView):
             if sms_status:
                 if serializer.is_valid():
                     serializer.save()
-            
-                return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
+                    return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+                return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+            return Response(data={"message": "An error occured while trying to send a verification code"}, status=status.HTTP_400_BAD_REQUEST)    
         
 mobile_otp = GeneratePhoneNumberOtp.as_view()
 

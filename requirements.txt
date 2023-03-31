@@ -17,3 +17,4 @@ sqlparse==0.4.3
 twilio==7.16.0
 urllib3==1.26.13
 whitenoise==6.2.0
+python-json-logger==2.0.6
